@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  password         String
+  name             String?
+  role             String    @default("student")
+  is_premium       Boolean?  @default(false)
+  last_notified_at DateTime?
+  created_at       DateTime? @default(now())
+
+  bookmarks          Bookmark[]
+  applications       Application[]
+  checklist_progress ChecklistProgress[]
+  profile            UserProfile?
+  roadmap            Roadmap?
+  roadmap_progress   RoadmapProgress[]
+  activity           UserActivity[]
+  interviews         Interview[]
+  rooms_created      Room[]
+  messages           Message[]
+  notifications      Notification[]
+}
+
+model Drive {
+  id           Int       @id @default(autoincrement())
+  company_name String
+  job_role     String
+  description  String
+  youtube_link String?
+  pdf_path     String?
+  logo_path    String?
+  deadline     String?
+  tags         String?
+  is_featured  Boolean?  @default(false)
+  location     String?
+  job_type     String?
+  checklist    String?
+  created_at   DateTime? @default(now())
+
+  bookmarks          Bookmark[]
+  applications       Application[]
+  checklist_progress ChecklistProgress[]
+}
+
+model Bookmark {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  drive_id   Int
+  created_at DateTime? @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  drive Drive @relation(fields: [drive_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, drive_id])
+}
+
+model Application {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  drive_id   Int
+  status     String?   @default("pending")
+  created_at DateTime? @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  drive Drive @relation(fields: [drive_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, drive_id])
+}
+
+model ChecklistProgress {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  drive_id   Int
+  item_index Int
+  is_checked Boolean?  @default(false)
+  created_at DateTime? @default(now())
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  drive Drive @relation(fields: [drive_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, drive_id, item_index])
+}
+
+model UserProfile {
+  id                Int       @id @default(autoincrement())
+  user_id           Int       @unique
+  level             String?
+  preferred_role    String?
+  skills            String?
+  goal              String?
+  time_availability String?
+  updated_at        DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Roadmap {
+  id           Int       @id @default(autoincrement())
+  user_id      Int       @unique
+  roadmap_json String
+  created_at   DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model RoadmapProgress {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  step_id      String
+  is_completed Boolean?  @default(false)
+  updated_at   DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, step_id])
+}
+
+model UserActivity {
+  id        Int       @id @default(autoincrement())
+  user_id   Int
+  action    String
+  metadata  String?
+  timestamp DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Interview {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  company    String
+  score      Int?
+  responses  String?
+  created_at DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Room {
+  id         Int       @id @default(autoincrement())
+  name       String
+  created_by Int
+  created_at DateTime? @default(now())
+
+  user     User      @relation(fields: [created_by], references: [id], onDelete: Cascade)
+  messages Message[]
+}
+
+model Message {
+  id         Int       @id @default(autoincrement())
+  room_id    Int
+  user_id    Int
+  message    String
+  created_at DateTime? @default(now())
+
+  room Room @relation(fields: [room_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  type       String?   @default("info")
+  title      String
+  message    String
+  is_read    Boolean?  @default(false)
+  created_at DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}

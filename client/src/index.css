@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #f0f4ff;
+    --bg-secondary: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #c7d2fe;
+    --navy-primary: #1e293b;
+    --accent-light: #e0e7ff;
+  }
+
+  .dark {
+    --bg-primary: #020617;
+    --bg-secondary: #0f172a;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #1e293b;
+    --navy-primary: #334155;
+    --accent-light: #1e293b;
+  }
+
+  body {
+    @apply transition-colors duration-300 antialiased bg-[var(--bg-primary)] text-[var(--text-primary)];
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-sm;
+  }
+  
+  .dark .glass-card {
+    @apply bg-opacity-40 backdrop-blur-xl border-white/5 shadow-2xl;
+  }
+
+  .btn-primary {
+    @apply bg-navy-900 dark:bg-blue-600 text-white px-6 py-3 rounded-xl font-bold 
+           hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-blue-500/25;
+  }
+
+  .premium-gradient {
+    @apply bg-gradient-to-br from-navy-900 via-navy-800 to-navy-950;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-300;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-slate-800 rounded-full hover:bg-gray-400 transition-colors;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
