@@ -18,7 +18,8 @@ async function initDB() {
     await prisma.$connect();
     console.log("Database connected");
   } catch (error) {
-    console.error("DB connection failed, continuing without DB");
+    console.error("DB connection failed, continuing without DB", error);
+    console.log("DATABASE_URL:", process.env.DATABASE_URL);
   }
 }
 
